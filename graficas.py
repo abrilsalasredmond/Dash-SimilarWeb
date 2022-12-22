@@ -14,7 +14,9 @@ nltk.download('stopwords')
 stop = stopwords.words("spanish")
 import nltk
 import re
-
+import seaborn as sb
+import matplotlib.pyplot as plt
+from plotly.subplots import make_subplots
 
 ################################################## 
 ######### Gráficas Temporales (1 Curvas) #########
@@ -252,3 +254,42 @@ def barCloud(df, w, variable = 'sub_sub_category', mode = 'RGB', top = 5):
                                                 .reset_index(drop = True)
     fig = px.pie(df_group.estimated_views.to_list(), df_group[variable].to_list())
     return(fig)
+#####################################################
+########## GRÁFICAS DISPERSIÓN##########################Nombre:figDISP1,figDISP2
+###################################################
+
+dfi=pd.DataFrame(pd.read_csv('MOCK_DATA.csv'))
+
+table = pd.pivot_table(dfi, values=['estimated_purchases','estimated_views'], index="main_category",
+                    columns=[], aggfunc=np.sum)
+table2 = pd.pivot_table(dfi, values=['estimated_purchases','estimated_views'], index="brand",
+                    columns=[], aggfunc=np.sum)
+df=table.reset_index()
+df2=table2.reset_index()
+
+import plotly.express as px
+import plotly.graph_objects as go
+from plotly.subplots import make_subplots
+# 100 linearly spaced numbers
+x=df2["estimated_purchases"]
+y=df2["estimated_views"]
+data=[go.Scatter(x=x, y=y, mode='markers') ]
+
+
+figDISP1 = px.scatter(df2, x="estimated_purchases", y="estimated_views", color="estimated_purchases",
+                 size='estimated_purchases', hover_data=['brand'])
+
+            
+figDISP1.update_layout(legend_title_text = "Brands")
+figDISP1.update_xaxes(title_text="Purchases")
+figDISP1.update_yaxes(title_text="Views")
+figDISP1.show()
+
+figDISP2 = px.scatter(df, x="estimated_purchases", y="estimated_views", color="estimated_purchases",
+                 size='estimated_purchases', hover_data=['main_category'])
+
+            
+figDISP2.update_layout(legend_title_text = "Main Amazon Categories")
+figDISP2.update_xaxes(title_text="Purchases")
+figDISP2.update_yaxes(title_text="Views")
+figDISP2.show()
